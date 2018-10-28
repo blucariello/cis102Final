@@ -1,2 +1,2 @@
 # cis102Final
-Code for my python programming class final
+Code for my video game development class final
