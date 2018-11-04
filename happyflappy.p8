@@ -8,12 +8,10 @@ function _init()
 end
 
 function update_game()
-	update_cave()
-	move_player()
+	update_c()
+	move_p()
 	check_hit()
-	--if game_done then over_menu() end
 end
-
 
 function gameover()
 	mode ="gameover"	
@@ -24,8 +22,8 @@ function update_start()
 end
 
 function startgame()
-	make_player()
-	make_cave()
+	make_p()
+	make_c()
 	mode = "game"
 end
 
@@ -42,11 +40,6 @@ function _update()
 	elseif mode == "start" then update_start()
 	elseif mode == "gameover" then update_gameover()
 	end
-	--if go_game == false and game_done == false then show_menu() end
-	--if go_game == true and game_done == false then run_game() end
-	--if go_game == false and game_done == true and life > 0 then keep_going() end
-	--if life == 0 then game_over() end
-	--if game_done then over_menu() end
 end
 
 function _draw()
@@ -58,8 +51,10 @@ end
 
 function draw_start()
 	cls()
-	print("title to happy flappy...", 25, 20, 8)
-	print(" press x to continue.", 25, 40, 11)
+	print("Welcome to happy flappy...", 22, 20, 8)
+	print(" press x to start game.", 20, 80, 11)
+	print(" press arrow key up to ", 20, 40, 13)
+	print(" control character.", 25, 60, 13)
 end
 
 function draw_gameover()
@@ -67,98 +62,94 @@ function draw_gameover()
 	print(" press x to continue.")
 end
 
-
-function check_hit()
- for i=player.x,player.x+7 do
- if (cave[i+1].top>player.y
- or cave[i+1].btm<player.y+7) then
+function check_hit() --checks for collisions
+ for i=p.x,p.x+7 do
+ if (c[i+1].top>p.y
+ or c[i+1].btm<p.y+7) then
  mode="gameover"
  end
  end
 end
 
 function run_game()
-	update_cave()
-	move_player()
-	check_hit()
+	update_c() --erases the part of cave that player has passed
+	move_p() --moves the player
+	check_hit() --checks for collisions
 end
 
-function make_cave()
- cave={{["top"]=5,["btm"]=119}}
+function make_c()
+ c={{["top"]=5,["btm"]=119}}
  top=45 --bottom boundary limit
  btm=85 --ceiling height limit
 end
 
-function update_cave()
- --reomves the back of the cave
- if (#cave>player.speed) then
- for i=1,player.speed do
- del(cave,cave[1])
+function update_c()
+ --removes the back of the cave
+ if (#c>p.speed) then
+ for i=1,p.speed do
+ del(c,c[1])
  end
  end
 
   --creates more cave
- while (#cave<128) do
+ while (#c<128) do
  local col={}
  local up=flr(rnd(7)-3)
  local dwn=flr(rnd(7)-3)
- col.top=mid(3,cave[#cave].top+up,top)
- col.btm=mid(btm,cave[#cave].btm+dwn,124)
- add(cave,col)
+ col.top=mid(3,c[#c].top+up,top)
+ col.btm=mid(btm,c[#c].btm+dwn,124)
+ add(c,col)
  end
 end
 
-function draw_cave()
- top_color=8 --play with these!
- btm_color=8 --choose your own colors!
- for i=1,#cave do
- line(i-1,0,i-1,cave[i].top,top_color)
- line(i-1,127,i-1,cave[i].btm,btm_color)
+function draw_c()
+ top_color=8 --top cave color
+ btm_color=8 --bottom cave color
+ for i=1,#c do --iterate through and precedurally generate cave
+ line(i-1,0,i-1,c[i].top,top_color)
+ line(i-1,127,i-1,c[i].btm,btm_color)
  end
 end
 
-function move_player()
- gravity=0.4 --bigger means more gravity!
- player.dy+=gravity --add gravity
- --jump
- if (btnp(2)) then
- sfx(0)
- player.dy+=5
+function move_p()
+ gravity=0.3 --bigger means more gravity!
+ p.dy+=gravity --add gravity
+ if (btnp(2)) then --jump action
+ sfx(0) -- play sound
+ p.dy-=5 --player movement
  end
- --move to new position
- player.y+=player.dy
- --update score
- player.score+=player.speed
+ p.y+=p.dy --move to new position
+ p.score+=p.speed --update score
 end
 
 function draw_game()
 	cls(1)
-	 draw_cave()
-	 draw_player()
-	 rectfill(0,0,128,7,0)
+	 draw_c() --draws cave
+	 draw_p() --draws player
+	 rectfill(0,0,128,7,0) --draws Life and Score box
 	 print("lives: "..lives,1,1,7)
-	 print("score: "..player.score,40,1,7)
+	 print("score: "..p.score,40,1,7)
 end	 
 
-function make_player()
- player={}
- player.x=24 --position
- player.y=60
- player.dy=0.25 --fall speed
- player.rise=1 --sprites
- player.fall=2
- player.dead=3
- player.speed=1 --fly speed
- player.score=0
+function make_p()
+ p={}
+ p.x=24 --x position
+ p.y=60 --y position
+ p.dy=0.25 --fall speed
+ p.rise=1 --sprite 1
+ p.fall=2 --sprite 2
+ p.dead=3 --sprite 3
+ p.speed=1 --fly speed
+ p.score=0
 end
 
-function draw_player()
+function draw_p()
  if (game_done) then
- spr(player.dead,player.x,player.y)
- elseif (player.dy<0) then
- spr(player.rise,player.x,player.y)
+ spr(p.dead,p.x,p.y) --draws player dead
+ elseif (p.dy<0) then
+ spr(p.rise,p.x,p.y) --draws player moving up
  else
- spr(player.fall,player.x,player.y)
+ spr(p.fall,p.x,p.y) --draws player moving down
  end
 end
 __gfx__
