@@ -5,10 +5,15 @@ function _init()
 	cls()
 	mode="start"
 	lives=3
+	starfield = {}
+	starfield.stars={}
+	starfield.max_speed=2
+	starfield.density=0.5
 end
 
 function update_game()
 	update_c()
+	starfield_update()
 	move_p()
 	check_hit()
 end
@@ -18,10 +23,11 @@ function gameover()
 end	
 
 function update_start()
-	if btn(5) then startgame() end
+	if btn(5) then startgame() lives=3 end
 end
 
 function startgame()
+	--starfield_init()
 	make_p()
 	make_c()
 	mode = "game"
@@ -32,6 +38,8 @@ function update_gameover()
 	if btn(5) then
 		startgame()
 		lives-=1
+	elseif
+	lives==0 then mode = "start"
 	end
 end
 
@@ -43,9 +51,14 @@ function _update()
 end
 
 function _draw()
-	if mode == "game" then draw_game()
+	if mode == "game" then draw_game() for star in all(starfield.stars) do
+		pset(star.x,star.y,12)
+		for i=1,star.speed do
+			pset(star.x+i,star.y,1)
+		end
+	end
 	elseif mode == "start" then draw_start()
-	elseif mode == "gameover" then draw_gameover()
+	elseif mode == "gameover" then cls() draw_gameover()
 	end
 end
 
@@ -58,8 +71,8 @@ function draw_start()
 end
 
 function draw_gameover()
-	print(" you died, try again. ")
-	print(" press x to continue.")
+	print(" you died, try again. ", 20, 40, 11)
+	print(" press x to continue.", 20, 80, 11)
 end
 
 function check_hit() --checks for collisions
@@ -112,7 +125,7 @@ function draw_c()
 end
 
 function move_p()
- gravity=0.3 --bigger means more gravity!
+ gravity=0.25--bigger means more gravity!
  p.dy+=gravity --add gravity
  if (btnp(2)) then --jump action
  sfx(0) -- play sound
@@ -151,7 +164,48 @@ function draw_p()
  else
  spr(p.fall,p.x,p.y) --draws player moving down
  end
+ 
+function starfield_init()
+	starfield = {}
+	starfield.stars={}
+	starfield.max_speed=10
+	starfield.density=3
 end
+
+function starfield_update()
+	if rnd(100)<50 then
+		for i=0,rnd(starfield.density)+1 do
+			starfield_add_star()
+		end
+	end
+	
+	for star in all(starfield.stars) do
+		star.x-=star.speed
+		if star.x<0 then
+			del(starfield.stars,star)
+		end
+	end
+end
+
+function starfield_draw()
+	for star in all(starfield.stars) do
+		pset(star.x,star.y,12)
+		for i=1,star.speed do
+			pset(star.x+i,star.y,1)
+		end
+	end
+end
+
+function starfield_add_star()
+	star={}
+	star.x=127
+	star.y=rnd(127)
+	star.speed=rnd(starfield.max_speed)+1
+	add(starfield.stars,star)
+end
+ 
+end
+
 __gfx__
 00000000aa0aa0aaaa0aa0aa0aaaaaa0000000008888888800000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000aa0aa0aaaa0aa0aaa0aaaa0a0000000080a00a0800000000000000000000000000000000000000000000000000000000000000000000000000000000
