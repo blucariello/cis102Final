@@ -28,7 +28,6 @@ function update_start()
 end
 
 function startgame()
-	--starfield_init()
 	make_p()
 	make_c()
 	mode = "game"
@@ -98,14 +97,13 @@ function make_c()
 end
 
 function update_c()
- --removes the back of the cave
- if (#c>p.speed) then
+ if (#c>p.speed) then --removes the back of the cave
  for i=1,p.speed do
  del(c,c[1])
  end
  end
 
-  --creates more cave
+ --creates more cave
  while (#c<128) do
  local col={}
  local up=flr(rnd(7)-3)
@@ -126,13 +124,13 @@ function draw_c()
 end
 
 function move_p()
- gravity=0.25--bigger means more gravity!
+ gravity=0.25 --larger number means more gravity
  p.dy+=gravity --add gravity
  if (btnp(2)) then --jump action
  sfx(0) -- play sound
  p.dy-=5 --player movement
  t=t+1
- camera(cos(t/3), cos(t/2))
+ camera(cos(t/3), cos(t/2)) --shake and bake the screen
  end
  p.y+=p.dy --move to new position
  p.score+=p.speed --update score
