@@ -9,6 +9,7 @@ function _init()
 	starfield.stars={}
 	starfield.max_speed=2
 	starfield.density=0.5
+	t=0
 end
 
 function update_game()
@@ -130,6 +131,8 @@ function move_p()
  if (btnp(2)) then --jump action
  sfx(0) -- play sound
  p.dy-=5 --player movement
+ t=t+1
+ camera(cos(t/3), cos(t/2))
  end
  p.y+=p.dy --move to new position
  p.score+=p.speed --update score
