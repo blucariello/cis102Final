@@ -5,16 +5,15 @@ function _init()
 	cls()
 	mode="start"
 	lives=3
-	starfield = {}
-	starfield.stars={}
-	starfield.max_speed=2
-	starfield.density=0.5
+	sf = {} --table for starfield
+	sf.max_speed=2 --speed of the stars
+	sf.density=0.5 --higher number makes more stars on screen
 	t=0
 end
 
 function update_game()
 	update_c()
-	starfield_update()
+	sf_update()
 	move_p()
 	check_hit()
 end
@@ -51,7 +50,7 @@ function _update()
 end
 
 function _draw()
-	if mode == "game" then draw_game() for star in all(starfield.stars) do
+	if mode == "game" then draw_game() for star in all(sf.stars) do
 		pset(star.x,star.y,12)
 		for i=1,star.speed do
 			pset(star.x+i,star.y,1)
@@ -72,6 +71,7 @@ end
 
 function draw_gameover()
 	print(" you died, try again. ", 20, 40, 11)
+	print(" Score: ", 20, 60, 11) print(p.score, 60, 60, 11)
 	print(" press x to continue.", 20, 80, 11)
 end
 
@@ -166,30 +166,30 @@ function draw_p()
  spr(p.fall,p.x,p.y) --draws player moving down
  end
  
-function starfield_init()
-	starfield = {}
-	starfield.stars={}
-	starfield.max_speed=10
-	starfield.density=3
+function sf_init()
+	sf = {}
+	sf.stars={}
+	sf.max_speed=10
+	sf.density=3
 end
 
-function starfield_update()
+function sf_update()
 	if rnd(100)<50 then
-		for i=0,rnd(starfield.density)+1 do
-			starfield_add_star()
+		for i=0,rnd(sf.density)+1 do
+			sf_add_star()
 		end
 	end
 	
-	for star in all(starfield.stars) do
+	for star in all(sf.stars) do
 		star.x-=star.speed
 		if star.x<0 then
-			del(starfield.stars,star)
+			del(sf.stars,star)
 		end
 	end
 end
 
-function starfield_draw()
-	for star in all(starfield.stars) do
+function sf_draw()
+	for star in all(sf.stars) do
 		pset(star.x,star.y,12)
 		for i=1,star.speed do
 			pset(star.x+i,star.y,1)
@@ -197,12 +197,12 @@ function starfield_draw()
 	end
 end
 
-function starfield_add_star()
+function sf_add_star()
 	star={}
 	star.x=127
 	star.y=rnd(127)
-	star.speed=rnd(starfield.max_speed)+1
-	add(starfield.stars,star)
+	star.speed=rnd(sf.max_speed)+1
+	add(sf.stars,star)
 end
  
 end
