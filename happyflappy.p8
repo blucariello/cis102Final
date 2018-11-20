@@ -5,9 +5,10 @@ function _init()
 	cls()
 	mode="start"
 	lives=3
-	sf = {} --table for starfield
-	sf.max_speed=2 --speed of the stars
-	sf.density=0.5 --higher number makes more stars on screen
+	sf = {}
+	sf.stars={}
+	sf.max_speed=2
+	sf.density=0.5
 	t=0
 end
 
@@ -206,6 +207,7 @@ function sf_add_star()
 end
  
 end
+
 
 __gfx__
 00000000aa0aa0aaaa0aa0aa0aaaaaa0000000008888888800000000000000000000000000000000000000000000000000000000000000000000000000000000
